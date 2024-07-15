@@ -8,34 +8,45 @@ import Menu from '@mui/material/Menu';
 import MenuIcon from '@mui/icons-material/Menu';
 import Container from '@mui/material/Container';
 import Button from '@mui/material/Button';
-import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
 import AdbIcon from '@mui/icons-material/Adb';
-import { useNavigate } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom';
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 
-const pages = ['Customer','Belanja'];
+const pages = [ 'Belanja', 'List'];
+
 function Navbar() {
-   const [anchorElNav, setAnchorElNav] = React.useState(null);
-   const navigate = useNavigate()
- 
-   const handleOpenNavMenu = (event) => {
-     setAnchorElNav(event.currentTarget);
-   };
+  const [anchorElNav, setAnchorElNav] = React.useState(null);
+  const [anchorElList, setAnchorElList] = React.useState(null);
+  const navigate = useNavigate();
 
-   const handleCloseNavMenu = () => {
-     setAnchorElNav(null);
-   };
- 
-   const handleNavClick = (page) => {
+  const handleOpenNavMenu = (event) => {
+    setAnchorElNav(event.currentTarget);
+  };
+
+  const handleCloseNavMenu = () => {
+    setAnchorElNav(null);
+  };
+
+  const handleOpenListMenu = (event) => {
+    setAnchorElList(event.currentTarget);
+  };
+
+  const handleCloseListMenu = () => {
+    setAnchorElList(null);
+  };
+
+  const handleNavClick = (page, event) => {
+    if (page === 'List') {
+      handleOpenListMenu(event);
+    } else {
       navigate(`/${page}`);
       handleCloseNavMenu();
-    };
-  
- 
-   
+    }
+  };
 
-   return (
-      <AppBar position="static">
+  return (
+    <AppBar position="static">
       <Container maxWidth="xl">
         <Toolbar disableGutters>
           <Typography
@@ -50,11 +61,10 @@ function Navbar() {
               letterSpacing: '.3rem',
               color: 'inherit',
               textDecoration: 'none',
-                  }}
-                  onClick={() => handleNavClick('')}
+            }}
+            onClick={() => navigate('/')}
           >
-                  LOGO
-                  
+            LOGO
           </Typography>
 
           <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
@@ -87,8 +97,7 @@ function Navbar() {
               }}
             >
               {pages.map((page) => (
-                 <MenuItem key={page}
-                    onClick={() => handleNavClick(page)} >
+                <MenuItem key={page} onClick={(event) => handleNavClick(page, event)}>
                   <Typography textAlign="center">{page}</Typography>
                 </MenuItem>
               ))}
@@ -108,8 +117,8 @@ function Navbar() {
               letterSpacing: '.3rem',
               color: 'inherit',
               textDecoration: 'none',
-                  }}
-                  onClick={() => handleNavClick('')}
+            }}
+            onClick={() => navigate('/')}
           >
             LOGO
           </Typography>
@@ -117,19 +126,47 @@ function Navbar() {
             {pages.map((page) => (
               <Button
                 key={page}
-                onClick={() => handleNavClick(page)}
+                onClick={(event) => handleNavClick(page, event)}
                 sx={{ my: 2, color: 'white', display: 'block' }}
               >
                 {page}
               </Button>
             ))}
           </Box>
-
-        
+          {/* Ikon Pengguna */}
+          <IconButton
+            size="large"
+            aria-label="account of current user"
+            aria-controls="menu-list"
+            aria-haspopup="true"
+            onClick={()=>navigate('/Customer')}
+            color="inherit"
+          >
+            <AccountCircleIcon />
+          </IconButton>
         </Toolbar>
       </Container>
+      <Menu
+        id="menu-list"
+        anchorEl={anchorElList}
+        anchorOrigin={{
+          vertical: 'bottom',
+          horizontal: 'left',
+        }}
+        keepMounted
+        transformOrigin={{
+          vertical: 'top',
+          horizontal: 'left',
+        }}
+        open={Boolean(anchorElList)}
+        onClose={handleCloseListMenu}
+      >
+        <MenuItem onClick={() => navigate('/ListCustomer')}>List Customer</MenuItem>
+        <MenuItem onClick={() => navigate('/ListBarang')}>List Barang</MenuItem>
+        <MenuItem onClick={() => navigate('/ListTransaksi')}>List Transaksi</MenuItem>
+      </Menu>
     </AppBar>
-  )
+  );
 }
 
-export default Navbar
+export default Navbar;

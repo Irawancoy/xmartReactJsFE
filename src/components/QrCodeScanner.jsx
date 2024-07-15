@@ -25,11 +25,11 @@ const QrCodeScanner = (args) => {
             display: 'flex',
             justifyContent: 'center',
             alignItems: 'center',
-            height: '50vh',
-            width: '50vh',
+         height: '100%',
+            width: '100%',
          }}
       >
-         <video ref={videoRef} style={{ width: '100%' }} />
+          <video ref={videoRef} style={{ width: '100%', height: '100%' }} />
          
       </Box>
    )

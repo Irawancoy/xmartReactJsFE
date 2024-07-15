@@ -46,7 +46,7 @@ const MainPage = () => {
             display: 'flex',
             justifyContent: 'center',
             alignItems: 'center',
-            height: '80vh',
+            height: '75vh',
          }}
         
       >
@@ -57,6 +57,7 @@ const MainPage = () => {
                justifyContent: 'center',
                alignItems: 'center',
                gap: 2,
+               width: '40%',
             }}
          >
 

@@ -32,8 +32,10 @@ const CustomerPage=()=> {
          <Grid container spacing={2}>
             <Grid item xs={12}>
                <Item>
-               <h1>Customer Page</h1>
-            <p>QR Code Result: {qrResult}</p>
+               <h1>Profile</h1>
+                  <p>QR Code Result: {qrResult}</p>
+                  <p>Name: John Doe</p>
+                  <p>Wallet: 100000</p>
                  
                  
                </Item>
