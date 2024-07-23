@@ -1,12 +1,12 @@
 import { Box, Button, Typography } from "@mui/material";
 import QrCodeScanner from "../components/QrCodeScanner";
-import { useState,useEffect } from "react";
+import { useState, useEffect } from "react";
+import { getCustomerByQRCode } from "../services/apis";
 
 const MainPage = () => {
    const [result, setResult] = useState('');
    const [isVerified, setIsVerified] = useState(false);
-   console.log(result);
-   
+
    const [isOpenScanner, setIsOpenScanner] = useState(false)
 
    // inisialisasi result dari local storage
@@ -18,11 +18,19 @@ const MainPage = () => {
       }
    }, []);
    
-   // simpan ke local storage
+   // simpan ke local storage jika customer ada di database
    useEffect(() => {
-      localStorage.setItem('qrCustomer', result);
       if (result) {
-         setIsVerified(true);
+         getCustomerByQRCode(result)
+            .then((response) => {
+               if (response.data) {
+                  localStorage.setItem('qrCustomer', result);
+                  setIsVerified(true);
+               }
+            })
+            .catch((error) => {
+               console.log(error);
+            })
       }
    }, [result])
 
@@ -31,7 +39,6 @@ const MainPage = () => {
 
 
    const openScanner = () => {
-      console.log('Open Scanner');
       if (!isOpenScanner) {
          setIsOpenScanner(true);
          setIsVerified(false);
@@ -46,7 +53,7 @@ const MainPage = () => {
             display: 'flex',
             justifyContent: 'center',
             alignItems: 'center',
-            height: '75vh',
+            height: '70vh',
          }}
         
       >
@@ -57,7 +64,8 @@ const MainPage = () => {
                justifyContent: 'center',
                alignItems: 'center',
                gap: 2,
-               width: '40%',
+               maxWidth: '30%',
+               width: '100%',
             }}
          >
 

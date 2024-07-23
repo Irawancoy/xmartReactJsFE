@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState,useEffect } from "react";
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
@@ -6,9 +6,36 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Grid from "@mui/material/Grid";
-import { Typography } from "@mui/material";
+import { TableFooter, Typography } from "@mui/material";
+import { getAllBarang } from "../services/apis";
+import TablePagination from '@mui/material/TablePagination';
 
 const ListBarangPage = () => {
+   const [barangs, setBarangs] = useState([])
+   const [pageNumber, setPageNumber] = useState(0);
+   const [pageSize, setPageSize] = useState(7);
+   const [totalCount, setTotalCount] = useState(0);
+   
+
+   useEffect(() => {
+      getAllBarang(pageNumber+1,pageSize).then((response) => {
+         setBarangs(response.data.data);
+         setTotalCount(response.data.total);
+      }).catch((error) => {
+         console.log(error);
+      });
+   }, [pageNumber, pageSize]);
+
+   const handleChangePage = (event, newPage) => {
+      setPageNumber(newPage);
+   }
+
+   const handleChangeRowsPerPage = (event) => {
+      setPageSize(parseInt(event.target.value))
+      setPageNumber(0);
+   }
+
+
    return (
       <Grid container justifyContent="center">
          <Grid item xs={12} md={8} lg={8}>
@@ -30,14 +57,28 @@ const ListBarangPage = () => {
                      </TableRow>
                   </TableHead>
                   <TableBody>
-                     <TableRow>
-                        <TableCell>1</TableCell>
-                        <TableCell>1234567890</TableCell>
-                        <TableCell>Barang 1</TableCell>
-                        <TableCell>10000</TableCell>
-                      
-                     </TableRow>
+                     {barangs.map((barang, index) => (
+                        <TableRow key={index}>
+                           <TableCell>{index + 1}</TableCell>
+                           <TableCell>{barang.rfid}</TableCell>
+                           <TableCell>{barang.namaBarang}</TableCell>
+                           <TableCell>{barang.hargaSatuan}</TableCell>
+                        </TableRow>
+                     ))}
                   </TableBody>
+                  <TableFooter>
+                     <TableRow>
+                        <TablePagination
+                           rowsPerPageOptions={[7, 14, 21]}
+                           count={totalCount}
+                           rowsPerPage={pageSize}
+                           page={pageNumber}
+                           onPageChange={handleChangePage}
+                           onRowsPerPageChange={handleChangeRowsPerPage}
+                        />
+                       
+                     </TableRow>
+                  </TableFooter>
                </Table>
             </TableContainer>
          </Grid>
