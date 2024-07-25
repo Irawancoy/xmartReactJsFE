@@ -34,7 +34,6 @@ const BelanjaPage = () => {
    const [qrCodeUser, setQrCodeUser] = useState('');
    const [cart, setCart] = useState([]);
    const [refresh, setRefresh] = useState(false);
-   const [itemNames, setItemNames] = useState({});
 
    // get transaksi by qr code in graphql query
    useEffect(() => {
@@ -44,6 +43,7 @@ const BelanjaPage = () => {
                _id
                qr_code
                rfid
+               nama_barang
                harga_satuan
                jumlah
                date
@@ -53,10 +53,6 @@ const BelanjaPage = () => {
             const transaksi = response.data.data.transaksiByQRCode;
             setCart(transaksi);
 
-            // Fetch item names for each transaction
-            transaksi.forEach((item) => {
-               fetchItemName(item.rfid);
-            });
          }).catch((error) => {
             console.log(error);
          });
@@ -74,6 +70,7 @@ const BelanjaPage = () => {
       if (result) {
          getBarangByRFID(result).then((response) => {
             addCart(response.data);
+            console.log(response.data);
          }).catch((error) => {
             console.log(error);
          });
@@ -102,18 +99,6 @@ const BelanjaPage = () => {
       }, 3000);
    }
 
-   const fetchItemName = (rfid) => {
-      if (!itemNames[rfid]) {
-         getBarangByRFID(rfid).then((response) => {
-            setItemNames((prev) => ({
-               ...prev,
-               [rfid]: response.data.data.namaBarang
-            }));
-         }).catch((error) => {
-            console.log(error);
-         });
-      }
-   };
 
    // post add cart dengan graphql mutation
    const addCart = (data) => {
@@ -129,12 +114,14 @@ const BelanjaPage = () => {
           addTransaksi(
             qr_code: "${qrCodeUser}",
             rfid: "${result}",
+            nama_barang: "${data.data.namaBarang}",
             harga_satuan: ${data.data.hargaSatuan},
             jumlah: 1
           ) {
             _id
             qr_code
             rfid
+            nama_barang
             harga_satuan
             jumlah
             date
@@ -143,7 +130,6 @@ const BelanjaPage = () => {
       `
       postTransaksiExpress(mutation)
          .then((response) => {
-            fetchItemName(result);
             setRefresh((prev) => !prev);
             notifActionSuccess();
          })
@@ -189,6 +175,7 @@ const BelanjaPage = () => {
             _id
             qr_code
             rfid
+            nama_barang
             harga_satuan
             jumlah
             date
@@ -268,7 +255,7 @@ const BelanjaPage = () => {
                               {cart.map((item, index) => (
                                  <TableRow key={item._id}>
                                     <TableCell>{index + 1}</TableCell>
-                                    <TableCell>{itemNames[item.rfid] || 'Loading...'}</TableCell>
+                                    <TableCell>{item.nama_barang}</TableCell>
                                     <TableCell>{item.rfid}</TableCell>
                                     <TableCell>{item.harga_satuan}</TableCell>
                                     <TableCell>
