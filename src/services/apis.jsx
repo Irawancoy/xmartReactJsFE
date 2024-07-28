@@ -1,13 +1,13 @@
 import { instanceSpringBoot, instanceExpress } from "./axiosConfig"
 
+// Mengambil URL endpoint dari variabel lingkungan yang didefinisikan di file .env
 const apiCustomerSB = import.meta.env.VITE_API_CUSTOMER_SPRINGBOOT
 const apiBarangSB = import.meta.env.VITE_API_BARANG_SPRINGBOOT
 const apiGraphQLExpress = import.meta.env.VITE_API_GRAPHQL_EXPRESS
 const apiTranferData = import.meta.env.VITE_API_TRANFER_DATA_EXPRESS
 const apiTransaksiSB = import.meta.env.VITE_API_TRANSAKSI_SPRINGBOOT
 
-
-// Get Customer By QR Code
+// Mendapatkan data customer berdasarkan QR code dari Spring Boot
 export const getCustomerByQRCode = (qrCode) => {
    return instanceSpringBoot
       .get(apiCustomerSB + "/qr-code", {
@@ -21,7 +21,7 @@ export const getCustomerByQRCode = (qrCode) => {
       })
 }
 
-// Get Barang ByRFID
+// Mendapatkan data barang berdasarkan RFID dari Spring Boot
 export const getBarangByRFID = (rfid) => {
    return instanceSpringBoot
       .get(apiBarangSB + "/rfid", {
@@ -35,7 +35,7 @@ export const getBarangByRFID = (rfid) => {
       })
 }
 
-// Get All Customers
+// Mendapatkan semua data customer dari Spring Boot
 export const getAllCustomers = (pageNumber,pageSize) => {
    return instanceSpringBoot
       .get(apiCustomerSB + "/all?pageNumber="+pageNumber+"&pageSize="+pageSize)
@@ -46,7 +46,7 @@ export const getAllCustomers = (pageNumber,pageSize) => {
       })
 }
 
-// Get All Barang
+// Mendapatkan semua data barang dari Spring Boot
 export const getAllBarang = (pageNumber,pageSize) => {
    return instanceSpringBoot
       .get(apiBarangSB + "/all?pageNumber="+pageNumber+"&pageSize="+pageSize)
@@ -57,7 +57,7 @@ export const getAllBarang = (pageNumber,pageSize) => {
       })
 }
 
-// Get All Transaksi
+// Mendapatkan semua data transaksi dari Spring Boot
 export const getAllTransaksi = (pageNumber,pageSize) => {
    return instanceSpringBoot
       .get(apiTransaksiSB + "/all?pageNumber="+pageNumber+"&pageSize="+pageSize)
@@ -68,11 +68,10 @@ export const getAllTransaksi = (pageNumber,pageSize) => {
       })
 }
 
-
-//post transaksi to mongodb & redis using express
+// Menambahkan transaksi ke MongoDB dan Redis menggunakan Express dan GraphQL
 export const postTransaksiExpress = (mutation) => {
    return instanceExpress
-     .post(apiGraphQLExpress, { query: mutation }) // Gunakan { query: mutation } untuk mengirim mutation dalam body request
+     .post(apiGraphQLExpress, { query: mutation }) // Mengirimkan mutation dalam body request
      .then((response) => {
        return response;
      })
@@ -80,9 +79,8 @@ export const postTransaksiExpress = (mutation) => {
        throw error;
      });
  };
- 
 
-// Get Transaksi By QR Code in Express
+// Mendapatkan transaksi berdasarkan QR code menggunakan Express dan GraphQL
 export const getTransaksiByQRCodeExpress = (query) => {
    console.log(query)
    return instanceExpress
@@ -94,7 +92,7 @@ export const getTransaksiByQRCodeExpress = (query) => {
       });
 };
 
-//delete transaksi by _id using graphql express
+// Menghapus transaksi berdasarkan _id menggunakan Express dan GraphQL
 export const deleteTransaksiExpress = (mutation) => {
    return instanceExpress
       .post(apiGraphQLExpress, { query: mutation })
@@ -105,7 +103,7 @@ export const deleteTransaksiExpress = (mutation) => {
       });
 }
 
-//Tranfer transaksi to postgresql 
+// Mentransfer transaksi ke PostgreSQL
 export const getTranferTransaksi = (qrUser) => {
    const url = apiTranferData + "/" + qrUser
    return instanceExpress
@@ -117,7 +115,7 @@ export const getTranferTransaksi = (qrUser) => {
       });
 }
 
-// Update Jumlah Barang Transaksi
+// Memperbarui jumlah barang dalam transaksi menggunakan Express dan GraphQL
 export const updateJumlahBarangTransaksi = (mutation) => {
    return instanceExpress
       .post(apiGraphQLExpress, { query: mutation })
@@ -127,9 +125,3 @@ export const updateJumlahBarangTransaksi = (mutation) => {
          throw error;
       });
 }
-
-
-
-
-
-

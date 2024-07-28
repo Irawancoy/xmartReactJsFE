@@ -6,34 +6,39 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Grid from "@mui/material/Grid";
-import { TableFooter,Typography } from "@mui/material";
-import { getAllCustomers } from "../services/apis";
+import { TableFooter, Typography } from "@mui/material";
+import { getAllCustomers } from "../services/apis"; // Import fungsi untuk mendapatkan data pelanggan dari API
 import TablePagination from '@mui/material/TablePagination';
 
 const ListCustomerPage = () => {
-   const [pageNumber, setPageNumber] = useState(0)
-   const [pageSize, setPageSize] = useState(7)
-   const [totalCount, setTotalCount] = useState(0)
+   // State untuk menyimpan nomor halaman, ukuran halaman, jumlah total data, dan data pelanggan
+   const [pageNumber, setPageNumber] = useState(0);
+   const [pageSize, setPageSize] = useState(7);
+   const [totalCount, setTotalCount] = useState(0);
+   const [customers, setCustomers] = useState([]);
 
-   const [customers, setCustomers] = useState([])
+   // useEffect untuk mengambil data pelanggan saat halaman pertama kali dimuat atau saat pageNumber/pageSize berubah
    useEffect(() => {
-      getAllCustomers(pageNumber + 1, pageSize).then((response) => {
-         setCustomers(response.data.data);
-         setTotalCount(response.data.total);
-      }).catch((error) => {
-         console.log(error);
-      });
+      getAllCustomers(pageNumber + 1, pageSize) // Memanggil API dengan nomor halaman dan ukuran halaman
+         .then((response) => {
+            setCustomers(response.data.data); // Menyimpan data pelanggan yang diambil dari API ke state customers
+            setTotalCount(response.data.total); // Menyimpan jumlah total data ke state totalCount
+         })
+         .catch((error) => {
+            console.log(error); // Menangani kesalahan jika terjadi
+         });
    }, [pageNumber, pageSize]);
 
+   // Fungsi untuk mengubah nomor halaman
    const handleChangePage = (event, newPage) => {
       setPageNumber(newPage);
-   }
+   };
 
+   // Fungsi untuk mengubah ukuran halaman
    const handleChangeRowsPerPage = (event) => {
       setPageSize(parseInt(event.target.value));
-      setPageNumber(0);
-   }
-
+      setPageNumber(0); // Reset nomor halaman ke 0 saat ukuran halaman berubah
+   };
 
    return (
       <Grid container justifyContent="center">
@@ -58,23 +63,22 @@ const ListCustomerPage = () => {
                   <TableBody>
                      {customers.map((customer, index) => (
                         <TableRow key={index}>
-                           <TableCell>{index + 1}</TableCell>
-                           <TableCell>{customer.nama}</TableCell>
-                           <TableCell>{customer.qrCode}</TableCell>
-                           <TableCell>{customer.wallet}</TableCell>
+                           <TableCell>{index + 1}</TableCell> {/* Nomor urut pelanggan */}
+                           <TableCell>{customer.nama}</TableCell> {/* Nama pelanggan */}
+                           <TableCell>{customer.qrCode}</TableCell> {/* QR Code pelanggan */}
+                           <TableCell>{customer.wallet}</TableCell> {/* Wallet pelanggan */}
                         </TableRow>
                      ))}
-
                   </TableBody>
                   <TableFooter>
                      <TableRow>
                         <TablePagination
-                           rowsPerPageOptions={[7, 14, 21]}
-                           count={totalCount}
-                           rowsPerPage={pageSize}
-                           page={pageNumber}
-                           onPageChange={handleChangePage}
-                           onRowsPerPageChange={handleChangeRowsPerPage}
+                           rowsPerPageOptions={[7, 14, 21]} // Pilihan jumlah baris per halaman
+                           count={totalCount} // Total jumlah data
+                           rowsPerPage={pageSize} // Jumlah baris per halaman saat ini
+                           page={pageNumber} // Nomor halaman saat ini
+                           onPageChange={handleChangePage} // Fungsi untuk mengubah halaman
+                           onRowsPerPageChange={handleChangeRowsPerPage} // Fungsi untuk mengubah ukuran halaman
                         />
                      </TableRow>
                   </TableFooter>

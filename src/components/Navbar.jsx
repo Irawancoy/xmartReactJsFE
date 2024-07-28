@@ -13,35 +13,41 @@ import AdbIcon from '@mui/icons-material/Adb';
 import { useNavigate } from 'react-router-dom';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 
-const pages = [ 'Belanja', 'List'];
+// Daftar halaman yang akan ditampilkan di menu navigasi
+const pages = ['Belanja', 'List'];
 
 function Navbar() {
-  const [anchorElNav, setAnchorElNav] = React.useState(null);
-  const [anchorElList, setAnchorElList] = React.useState(null);
+  const [anchorElNav, setAnchorElNav] = React.useState(null); // State untuk menu navigasi
+  const [anchorElList, setAnchorElList] = React.useState(null); // State untuk submenu "List"
   const navigate = useNavigate();
 
+  // Fungsi untuk membuka menu navigasi
   const handleOpenNavMenu = (event) => {
     setAnchorElNav(event.currentTarget);
   };
 
+  // Fungsi untuk menutup menu navigasi
   const handleCloseNavMenu = () => {
     setAnchorElNav(null);
   };
 
+  // Fungsi untuk membuka submenu "List"
   const handleOpenListMenu = (event) => {
     setAnchorElList(event.currentTarget);
   };
 
+  // Fungsi untuk menutup submenu "List"
   const handleCloseListMenu = () => {
     setAnchorElList(null);
   };
 
+  // Fungsi untuk menangani klik navigasi
   const handleNavClick = (page, event) => {
     if (page === 'List') {
-      handleOpenListMenu(event);
+      handleOpenListMenu(event); // Buka submenu "List" jika halaman "List" diklik
     } else {
-      navigate(`/${page}`);
-      handleCloseNavMenu();
+      navigate(`/${page}`); // Arahkan ke halaman yang sesuai
+      handleCloseNavMenu(); // Tutup menu navigasi
     }
   };
 
@@ -49,6 +55,7 @@ function Navbar() {
     <AppBar position="static">
       <Container maxWidth="xl">
         <Toolbar disableGutters>
+          {/* Logo dan navigasi utama */}
           <Typography
             variant="h6"
             noWrap
@@ -64,9 +71,10 @@ function Navbar() {
             }}
             onClick={() => navigate('/')}
           >
-            LOGO
+           XMART
           </Typography>
 
+          {/* Menu navigasi untuk tampilan kecil */}
           <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
             <IconButton
               size="large"
@@ -122,6 +130,7 @@ function Navbar() {
           >
             LOGO
           </Typography>
+          {/* Menu navigasi untuk tampilan besar */}
           <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
             {pages.map((page) => (
               <Button
@@ -139,13 +148,14 @@ function Navbar() {
             aria-label="account of current user"
             aria-controls="menu-list"
             aria-haspopup="true"
-            onClick={()=>navigate('/Customer')}
+            onClick={() => navigate('/Customer')}
             color="inherit"
           >
             <AccountCircleIcon />
           </IconButton>
         </Toolbar>
       </Container>
+      {/* Submenu untuk "List" */}
       <Menu
         id="menu-list"
         anchorEl={anchorElList}

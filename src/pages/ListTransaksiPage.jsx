@@ -8,30 +8,36 @@ import TableRow from '@mui/material/TableRow';
 import Grid from "@mui/material/Grid";
 import { TableFooter, Typography } from "@mui/material";
 import TablePagination from '@mui/material/TablePagination';
-import { getAllTransaksi } from "../services/apis";
+import { getAllTransaksi } from "../services/apis"; // Import fungsi untuk mendapatkan data transaksi dari API
 
 const ListTransaksiPage = () => {
+   // State untuk menyimpan nomor halaman, ukuran halaman, jumlah total data, dan data transaksi
    const [pageNumber, setPageNumber] = useState(0); 
    const [pageSize, setPageSize] = useState(7);
    const [transaksis, setTransaksis] = useState([]);
    const [totalCount, setTotalCount] = useState(0);
 
+   // useEffect untuk mengambil data transaksi saat halaman pertama kali dimuat atau saat pageNumber/pageSize berubah
    useEffect(() => {
-      getAllTransaksi(pageNumber + 1, pageSize).then((response) => {
-         setTransaksis(response.data.data);
-         setTotalCount(response.data.total);
-      }).catch((error) => {
-         console.log(error);
-      });
+      getAllTransaksi(pageNumber + 1, pageSize) // Memanggil API dengan nomor halaman dan ukuran halaman
+         .then((response) => {
+            setTransaksis(response.data.data); // Menyimpan data transaksi yang diambil dari API ke state transaksis
+            setTotalCount(response.data.total); // Menyimpan jumlah total data ke state totalCount
+         })
+         .catch((error) => {
+            console.log(error); // Menangani kesalahan jika terjadi
+         });
    }, [pageNumber, pageSize]);
 
+   // Fungsi untuk mengubah nomor halaman
    const handleChangePage = (event, newPage) => {
       setPageNumber(newPage);
    };
 
+   // Fungsi untuk mengubah ukuran halaman
    const handleChangeRowsPerPage = (event) => {
       setPageSize(parseInt(event.target.value));
-      setPageNumber(0);
+      setPageNumber(0); // Reset nomor halaman ke 0 saat ukuran halaman berubah
    };
 
    return (
@@ -61,25 +67,24 @@ const ListTransaksiPage = () => {
                   <TableBody>
                      {transaksis.map((transaksi, index) => (
                         <TableRow key={index}>
-                           <TableCell>{index + 1 + (pageNumber * pageSize)}</TableCell>
-                           <TableCell>{transaksi.namaCustomer}</TableCell>
-                           <TableCell>{transaksi.namaBarang}</TableCell>
-                           <TableCell>{transaksi.hargaSatuan}</TableCell>
-                           <TableCell>{transaksi.jumlah}</TableCell>
-                           <TableCell>{transaksi.date}</TableCell>
+                           <TableCell>{index + 1 + (pageNumber * pageSize)}</TableCell> {/* Nomor urut transaksi dengan penyesuaian halaman */}
+                           <TableCell>{transaksi.namaCustomer}</TableCell> {/* Nama customer */}
+                           <TableCell>{transaksi.namaBarang}</TableCell> {/* Nama barang */}
+                           <TableCell>{transaksi.hargaSatuan}</TableCell> {/* Harga satuan barang */}
+                           <TableCell>{transaksi.jumlah}</TableCell> {/* Jumlah barang */}
+                           <TableCell>{transaksi.date}</TableCell> {/* Waktu transaksi */}
                         </TableRow>
                      ))}
                   </TableBody>
                   <TableFooter>
                      <TableRow>
                         <TablePagination
-                           rowsPerPageOptions={[7, 14, 21]}
-                           count={totalCount}
-                           rowsPerPage={pageSize}
-                           page={pageNumber}
-                           onPageChange={handleChangePage}
-                           onRowsPerPageChange={handleChangeRowsPerPage}
-
+                           rowsPerPageOptions={[7, 14, 21]} // Pilihan jumlah baris per halaman
+                           count={totalCount} // Total jumlah data
+                           rowsPerPage={pageSize} // Jumlah baris per halaman saat ini
+                           page={pageNumber} // Nomor halaman saat ini
+                           onPageChange={handleChangePage} // Fungsi untuk mengubah halaman
+                           onRowsPerPageChange={handleChangeRowsPerPage} // Fungsi untuk mengubah ukuran halaman
                         />
                      </TableRow>
                   </TableFooter>

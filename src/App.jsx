@@ -1,4 +1,3 @@
-// import './App.css'
 import Layouts from './layouts'
 import React from 'react'
 import { BrowserRouter as Router } from "react-router-dom";

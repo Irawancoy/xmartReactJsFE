@@ -18,7 +18,7 @@ import { Delete } from "@mui/icons-material";
 import { getTranferTransaksi } from "../services/apis";
 import { updateJumlahBarangTransaksi } from "../services/apis";
 
-
+// Styling untuk Paper
 const Item = styled(Paper)(({ theme }) => ({
    backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
    ...theme.typography.body2,
@@ -28,14 +28,14 @@ const Item = styled(Paper)(({ theme }) => ({
 }));
 
 const BelanjaPage = () => {
-   const [isOpenScanner, setIsOpenScanner] = useState(false);
-   const [result, setResult] = useState('');
-   const [actionSuccess, setActionSuccess] = useState(false);
-   const [qrCodeUser, setQrCodeUser] = useState('');
-   const [cart, setCart] = useState([]);
-   const [refresh, setRefresh] = useState(false);
+   const [isOpenScanner, setIsOpenScanner] = useState(false); // State untuk membuka/menutup scanner
+   const [result, setResult] = useState(''); // State untuk hasil scan QR code
+   const [actionSuccess, setActionSuccess] = useState(false); // State untuk menampilkan notifikasi sukses
+   const [qrCodeUser, setQrCodeUser] = useState(''); // State untuk menyimpan QR code user
+   const [cart, setCart] = useState([]); // State untuk menyimpan data barang di keranjang
+   const [refresh, setRefresh] = useState(false); // State untuk refresh data
 
-   // get transaksi by qr code in graphql query
+   // Mengambil transaksi berdasarkan QR code user
    useEffect(() => {
       if (qrCodeUser) {
          const query = `{
@@ -52,24 +52,24 @@ const BelanjaPage = () => {
          getTransaksiByQRCodeExpress(query).then((response) => {
             const transaksi = response.data.data.transaksiByQRCode;
             setCart(transaksi);
-
          }).catch((error) => {
             console.log(error);
          });
       }
    }, [qrCodeUser, refresh]);
 
-
+   // Mengambil QR code customer dari local storage saat komponen pertama kali dimuat
    useEffect(() => {
       if (localStorage.getItem('qrCustomer')) {
          setQrCodeUser(localStorage.getItem('qrCustomer'));
       }
    }, []);
 
+   // Mendapatkan data barang berdasarkan RFID setelah QR code discan
    useEffect(() => {
       if (result) {
          getBarangByRFID(result).then((response) => {
-            addCart(response.data);
+            addCart(response.data); // Menambahkan barang ke keranjang
             console.log(response.data);
          }).catch((error) => {
             console.log(error);
@@ -77,21 +77,22 @@ const BelanjaPage = () => {
       }
    }, [result]);
 
+   // Fungsi untuk membuka/menutup scanner
    const openScanner = () => {
       setIsOpenScanner(!isOpenScanner);
    };
 
-
-
+   // Fungsi untuk checkout barang di keranjang
    const checkoutOnClick = () => {
       getTranferTransaksi(qrCodeUser).then((response) => {
-         setCart([]);
-         notifActionSuccess();
+         setCart([]); // Mengosongkan keranjang setelah checkout
+         notifActionSuccess(); // Menampilkan notifikasi sukses
       }).catch((error) => {
          console.log(error);
       });
    }
 
+   // Menampilkan notifikasi sukses
    const notifActionSuccess = () => {
       setActionSuccess(true);
       setTimeout(() => {
@@ -99,13 +100,11 @@ const BelanjaPage = () => {
       }, 3000);
    }
 
-
-   // post add cart dengan graphql mutation
+   // Menambahkan barang ke keranjang menggunakan GraphQL mutation
    const addCart = (data) => {
       if (cart.some(item => item.rfid === result)) {
-         
          const item = cart.find(item => item.rfid === result);
-         updateJumlahBarang({ _id: item._id, jumlah: item.jumlah + 1 });
+         updateJumlahBarang({ _id: item._id, jumlah: item.jumlah + 1 }); // Mengupdate jumlah barang jika sudah ada di keranjang
          return;
       }
 
@@ -130,17 +129,15 @@ const BelanjaPage = () => {
       `
       postTransaksiExpress(mutation)
          .then((response) => {
-            setRefresh((prev) => !prev);
-            notifActionSuccess();
+            setRefresh((prev) => !prev); // Refresh data setelah berhasil menambahkan barang
+            notifActionSuccess(); // Menampilkan notifikasi sukses
          })
          .catch((error) => {
             console.log(error);
          });
    };
 
-
-
-   //delete transaksi by _id using graphql express
+   // Menghapus transaksi berdasarkan _id menggunakan GraphQL mutation
    const deleteTransaksi = (_id) => {
       const mutation = `
         mutation {
@@ -152,17 +149,18 @@ const BelanjaPage = () => {
 
       deleteTransaksiExpress(mutation)
          .then((response) => {
-            setRefresh((prev) => !prev);
-            notifActionSuccess();
+            setRefresh((prev) => !prev); // Refresh data setelah berhasil menghapus transaksi
+            notifActionSuccess(); // Menampilkan notifikasi sukses
          })
          .catch((error) => {
             console.log(error);
          });
    };
 
+   // Mengupdate jumlah barang di keranjang
    const updateJumlahBarang = (data) => {
       if (data.jumlah <= 0) {
-         deleteTransaksi(data._id);
+         deleteTransaksi(data._id); // Menghapus transaksi jika jumlah barang <= 0
          return;
       }
 
@@ -184,13 +182,12 @@ const BelanjaPage = () => {
       `
       updateJumlahBarangTransaksi(mutation)
          .then((response) => {
-            setRefresh((prev) => !prev);
-            notifActionSuccess();
+            setRefresh((prev) => !prev); // Refresh data setelah berhasil mengupdate jumlah barang
+            notifActionSuccess(); // Menampilkan notifikasi sukses
          })
          .catch((error) => {
             console.log(error);
-         }
-         )
+         });
    }
 
    return (
@@ -275,17 +272,8 @@ const BelanjaPage = () => {
                                           >
                                              +
                                           </Button>
-
-
                                        </ButtonGroup>
-                                       
-
-
-                                       
-                                 
-
                                     </TableCell>
-
                                     <TableCell>{item.harga_satuan * item.jumlah}</TableCell>
                                     <TableCell>
                                        <Button
